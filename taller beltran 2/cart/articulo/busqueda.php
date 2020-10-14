@@ -1,88 +1,106 @@
 <?php
-  session_start();
-  require("../BD/conexion.php");
-?>  
+require "../BD/conexion.php";
 
-<!DOCTYPE html>
-<html>
-<head>
+	
+extract ($_REQUEST);
 
-  <title>BUSQUEDA</title>
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximun-scale=1, minium-scale=1">
-  <link rel="stylesheet" type="text/css" href="../CSS/input.css">
-  <link rel="stylesheet" type="text/css" href="../CSS/boton.css">
+$objConexion=Conectarse();
 
-</head>
-<script type="text/javascript">
-  function goBack() {
-  window.history.back();
-}
-</script>
-<body>
-<img onclick="goBack()" src="../../imgs/atras.png"  width=80 height=80>
+?>
 
-  <div class="datagrid"><table border="8" style=" margin: 0 auto;">
-  <thead>
-    
-    <th colspan="7"><img src="../imgs/new_log.png" width="40%" height="auto"></th>
-  </thead>
-  <tr>
-    <th>ID</th>
-    <th>Nombre</th>
-    <th>Imagen</th>
-    <th>Precio</th>
-    
-    <th colspan="2">Opciones</th>
-  </tr>
-  <tbody>
-
-    <?php
-      if (isset($_POST['boton']) && $_POST ['codigo']!="") {
-      $codigo=$_POST['codigo'];
-      $sql="SELECT * FROM tbproduct WHERE id='$codigo'";
-      $result=mysqli_query($conectar,$sql);
+<?php
+      
+      $sql="SELECT * FROM products WHERE id_producto='$_REQUEST[codigo]'";
+          
+      $result = $objConexion->query($sql);
       $compara_usr=mysqli_num_rows($result);
       if($compara_usr != 1){
           echo '<script type="text/javascript">
                             alert("no esta registrado");
-                            window.history.go(-1);
+                           window.history.go(-1);
                           </script>';
                     exit;
         }else{
 
-      while ($mostrar=mysqli_fetch_array($result)) {
+     
      ?>
-  <tr>
-    <td><center><?php echo $mostrar['id'] ?></center></td>
-    <td><center><?php echo $mostrar['name'] ?></center></td>
-    <td><center><?php echo $mostrar['img'] ?></center></td>
-    <td><center><?php echo $mostrar['precio'] ?></center></td>
-    
-    <td><a href="modificar_art.php?id=<?php echo $mostrar['id']; ?>">Actualizar información</a></td>
-    <td><a href="eliminar_art.php?id=<?php echo $mostrar['id']; ?>">Borrar</a></td>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Listar Empleados:)</title>
+</head>
+
+<body>
+<h1 align="center"> LISTAR EMPLEADOS</h1>
+<table width="89%" border="0" align="center">
+  <tr align="center" bgcolor="#FFFF99">
+    <td width="11%">ID</td>
+    <td width="16%">Imagen</td>
+    <td width="19%">Nombre</td>
+    <td width="12%">Estado</td>
+    <td width="15%">Fecha de Ingreso</td>
+    <td width="7%">Precio</td>
+    <td width="10%">Descripción</td>
+    <td width="10%">Unidades disponibles</td>
+    <td width="10%">IVA</td>
+    <td width="10%">Modificar</td>
+    <td width="10%">Eliminar</td>
   </tr>
-    <?php  
+  
+  <?php
+  //vamos agregar cada fila de la tabla de acuerdo al número de empleados de forma dinamica
+  
+  while ($producto = $result->fetch_object())
+  {
+     
+	?>
+	<tr bgcolor="#CCCCFF">
+        <td> <?php  echo $producto->id_producto?></td>
+        <td><img src="../imgs/<?php  echo $producto->img  ?>" width="auto" height="220" alt="">  </td>
+        <td><?php  echo $producto->  nombre_producto?></td>
+        <td><?php  echo $producto-> estado_producto ?></td>
+        <td><?php  echo $producto->fecha_registro  ?></td>
+        <td><?php  echo $producto-> precio_producto ?></td>
+        <td><?php  echo $producto-> descripcion ?></td>
+        <td><?php  echo $producto-> unidades_dispo ?></td>
+        <td><?php  echo $producto-> IVA ?>%</td>
+        
+        
+    
+        <td align="center"><a href="modificar_art.php?id_producto=<?php  echo $producto->id_producto?>"><img src="../../imgs/descarga.png" width="39" height="34" /></a></td>
+        
+        
+        <td align="center"><a href="eliminar_art.php?id_producto=<?php  echo $producto->id_producto?>"><img src="../../imgs/descarga1.png" width="39" height="34" /></a></td>
+        <?php  
         }
-      }
-    }  
-    
+      
     ?>
-  <tr>
-    <td colspan="7"><center><a href="../gestion.php">Gestión </a></center></td>
-  </tr>
-  </tbody>
-</table></div>
+        
+        
+        <?php  
+        }
+      
+    ?>
+         
+  	</tr>
+
+  
+  
+  
+  
+</table>
+<p>
 
 
-</body>
-</html>
 <style type="text/css">
+  
+
   body {
 
-
-font-family: DejaVu Sans Mono;
 /* Ubicación de la imagen */
 
 background-image: url(../imgs/fondo%20de%20in.jpg);
@@ -113,14 +131,17 @@ background-color: #66999;
 
 }
 
-a:link, a:visited {
-  background-color: blue;
-  color: white;
-  padding: 15px 25px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-}
 
+.boton{
+    background-color: blue;
+    color: white;
+    padding: 15px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+}
 td,th{background-color: #E8E8E8;}
 </style>
+</body>
+</html>
